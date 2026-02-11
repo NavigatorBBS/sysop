@@ -2,7 +2,7 @@
 Quick test to verify GitHub Copilot SDK integration.
 
 Run with: python -m pytest test_copilot_integration.py -v
-Or: python workspace/src/maxbot/test_copilot_integration.py
+Or: python workspace/src/sysop/test_copilot_integration.py
 """
 
 import asyncio
@@ -35,14 +35,14 @@ class TestCopilotSDKIntegration:
         try:
             from copilot import CopilotClient, define_tool
             from pydantic import BaseModel, Field
-            from maxbot.chatbot_agent import NotebookChatAgent, MarkdownResponse
+            from sysop.chatbot_agent import NotebookChatAgent, MarkdownResponse
             print("✅ All imports successful")
         except ImportError as e:
             pytest.fail(f"Import failed: {e}")
     
     def test_agent_initialization(self):
         """Test agent can be initialized with proper parameters."""
-        from maxbot.chatbot_agent import NotebookChatAgent
+        from sysop.chatbot_agent import NotebookChatAgent
         
         # Mock token for testing
         os.environ["GITHUB_COPILOT_PAT"] = "test-token-for-initialization"
@@ -58,7 +58,7 @@ class TestCopilotSDKIntegration:
     
     def test_markdown_response(self):
         """Test MarkdownResponse class."""
-        from maxbot.chatbot_agent import MarkdownResponse
+        from sysop.chatbot_agent import MarkdownResponse
         
         response = MarkdownResponse("**Hello** World")
         assert str(response) == "**Hello** World"
@@ -76,7 +76,7 @@ class TestCopilotSDKIntegration:
         Only runs if GITHUB_COPILOT_PAT is set.
         """
         async def run_test():
-            from maxbot.chatbot_agent import NotebookChatAgent
+            from sysop.chatbot_agent import NotebookChatAgent
             
             agent = NotebookChatAgent(model="gpt-4o")
             
@@ -103,7 +103,7 @@ def run_manual_test():
     """
     Manual test function - run this directly if you have GITHUB_COPILOT_PAT set.
     
-    Usage: python workspace/src/maxbot/test_copilot_integration.py
+    Usage: python workspace/src/sysop/test_copilot_integration.py
     """
     print("=" * 60)
     print("GitHub Copilot SDK Integration Test")

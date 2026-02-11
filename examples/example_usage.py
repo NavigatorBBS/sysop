@@ -12,7 +12,7 @@ import asyncio
 from pydantic import BaseModel, Field
 from copilot import define_tool
 
-from maxbot.chatbot_agent import NotebookChatAgent
+from sysop.chatbot_agent import NotebookChatAgent
 
 
 # Example 1: Define a custom tool using @define_tool decorator
@@ -132,7 +132,7 @@ async def jupyter_example():
     from dotenv import load_dotenv
     load_dotenv()
     
-    %load_ext maxbot
+    %load_ext sysop
     
     # Basic usage
     response = await agent.chat("Analyze my pandas code")

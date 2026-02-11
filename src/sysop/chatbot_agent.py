@@ -92,7 +92,7 @@ class NotebookChatAgent:
         
         # Default system prompt for notebook assistant
         default_system = (
-            "You are MaxBot, an AI expert in financial analysis and data science. "
+            "You are sysop, an AI expert in financial analysis and data science. "
             "You can analyze Python notebook code, understand conda environments, "
             "suggest improvements for financial data processing, and help with transaction categorization. "
             "\n\n"

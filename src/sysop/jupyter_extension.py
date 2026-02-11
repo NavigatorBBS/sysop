@@ -1,5 +1,5 @@
 """
-Jupyter extension for MaxBot: GitHub Copilot SDK-powered notebook assistant.
+Jupyter extension for sysop: GitHub Copilot SDK-powered notebook assistant.
 
 This extension automatically:
 - Detects GitHub Copilot configuration from environment
@@ -8,7 +8,7 @@ This extension automatically:
 - Provides display() and Markdown() utilities for rendering responses
 
 Usage in a notebook cell:
-    %load_ext maxbot
+    %load_ext sysop
     
 Then use (response auto-displays as markdown):
     response = await agent.chat("Your question here")
@@ -23,12 +23,12 @@ from IPython.display import display, Markdown
 
 def load_ipython_extension(ipython):
     """
-    Load the MaxBot extension into an IPython kernel.
+    Load the sysop extension into an IPython kernel.
     
-    This is called when a user runs: %load_ext maxbot
+    This is called when a user runs: %load_ext sysop
     """
     # Import here to avoid circular dependencies
-    from maxbot.chatbot_agent import NotebookChatAgent
+    from sysop.chatbot_agent import NotebookChatAgent
     
     # Get GitHub Copilot configuration from environment
     github_pat = os.getenv("GITHUB_COPILOT_PAT")
@@ -48,7 +48,7 @@ def load_ipython_extension(ipython):
         
         # Display status
         display(Markdown(
-            "**MaxBot Ready! 🤖**\n\n"
+            "**sysop Ready! 🤖**\n\n"
             "🟢 **GitHub Copilot SDK** configured\n\n"
             "Usage:\n"
             "```python\n"
@@ -72,7 +72,7 @@ def load_ipython_extension(ipython):
         
     except ImportError as e:
         display(Markdown(
-            "❌ **MaxBot Extension Failed**\n\n"
+            "❌ **sysop Extension Failed**\n\n"
             "GitHub Copilot SDK not installed.\n\n"
             "Install with:\n"
             "```bash\n"
@@ -82,7 +82,7 @@ def load_ipython_extension(ipython):
         ))
     except ValueError as e:
         display(Markdown(
-            "❌ **MaxBot Extension Failed**\n\n"
+            "❌ **sysop Extension Failed**\n\n"
             "Missing required environment variables:\n\n"
             "```\n"
             f"{str(e)}\n"
@@ -93,7 +93,7 @@ def load_ipython_extension(ipython):
         ))
     except Exception as e:
         display(Markdown(
-            "❌ **MaxBot Extension Error**\n\n"
+            "❌ **sysop Extension Error**\n\n"
             "```\n"
             f"{str(e)}\n"
             "```\n\n"
@@ -103,9 +103,9 @@ def load_ipython_extension(ipython):
 
 def unload_ipython_extension(ipython):
     """
-    Unload the MaxBot extension.
+    Unload the sysop extension.
     
-    Called when a user runs: %unload_ext maxbot
+    Called when a user runs: %unload_ext sysop
     """
     for name in ['agent', 'display', 'Markdown']:
         if name in ipython.user_ns:
