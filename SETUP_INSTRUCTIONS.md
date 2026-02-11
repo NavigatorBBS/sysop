@@ -1,6 +1,6 @@
-# MaxBot Repository Setup Instructions
+# sysop Repository Setup Instructions
 
-This document provides step-by-step instructions for setting up the MaxBot GitHub repository.
+This document provides step-by-step instructions for setting up the sysop GitHub repository.
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ This document provides step-by-step instructions for setting up the MaxBot GitHu
 
 1. Go to https://github.com/new
 2. Fill in repository details:
-   - **Repository name**: `maxbot`
+   - **Repository name**: `sysop`
    - **Description**: "GitHub Copilot SDK-powered Jupyter notebook assistant"
    - **Visibility**: Public (or Private if preferred)
    - **DO NOT** initialize with README, .gitignore, or license (we already have these)
@@ -20,10 +20,10 @@ This document provides step-by-step instructions for setting up the MaxBot GitHu
 
 ## Step 2: Initialize Local Git Repository
 
-Navigate to the maxbot directory and initialize git:
+Navigate to the sysop directory and initialize git:
 
 ```powershell
-cd C:\Users\chris\code\maxbot
+cd C:\Users\chris\code\sysop
 
 # Initialize git repository
 git init
@@ -32,7 +32,7 @@ git init
 git add .
 
 # Create initial commit
-git commit -m "feat: initial release of MaxBot v0.1.0
+git commit -m "feat: initial release of sysop v0.1.0
 
 - Core NotebookChatAgent with GitHub Copilot SDK integration
 - IPython extension for seamless Jupyter integration
@@ -44,11 +44,9 @@ git commit -m "feat: initial release of MaxBot v0.1.0
 
 ## Step 3: Connect to GitHub
 
-Replace `YOUR_USERNAME` with your actual GitHub username:
-
 ```powershell
 # Add remote origin
-git remote add origin https://github.com/YOUR_USERNAME/maxbot.git
+git remote add origin https://github.com/NavigatorBBS/sysop.git
 
 # Rename branch to main (if needed)
 git branch -M main
@@ -82,17 +80,10 @@ git push -u origin main
 
 ## Step 5: Update URLs in Files
 
-Replace `YOUR_USERNAME` with your actual GitHub username in these files:
+If needed, verify that all URLs reference NavigatorBBS/sysop:
 
 - `README.md` (multiple locations)
 - `pyproject.toml` (URLs section)
-- `docs/COPILOT_GUIDE.md` (references section)
-
-```powershell
-# Example: Replace YOUR_USERNAME with actual username
-(Get-Content README.md) -replace 'YOUR_USERNAME', 'your-actual-username' | Set-Content README.md
-(Get-Content pyproject.toml) -replace 'YOUR_USERNAME', 'your-actual-username' | Set-Content pyproject.toml
-```
 
 Then commit and push:
 
@@ -108,7 +99,7 @@ git push
 2. Click **Draft a new release**
 3. Fill in release details:
    - **Tag version**: `v0.1.0`
-   - **Release title**: `MaxBot v0.1.0 - Initial Release`
+   - **Release title**: `sysop v0.1.0 - Initial Release`
    - **Description**: Copy content from `RELEASE_NOTES.md`
 4. Click **Publish release**
 
@@ -122,15 +113,15 @@ python -m venv test-env
 .\test-env\Scripts\activate
 
 # Install from GitHub
-pip install git+https://github.com/YOUR_USERNAME/maxbot.git
+pip install git+https://github.com/NavigatorBBS/sysop.git
 
 # Test import
-python -c "from maxbot import NotebookChatAgent; print('Success!')"
+python -c "from sysop import NotebookChatAgent; print('Success!')"
 ```
 
 ## Optional: Publish to PyPI
 
-To make the package installable via `pip install maxbot`:
+To make the package installable via `pip install sysop`:
 
 ### 1. Create PyPI Account
 
@@ -154,7 +145,7 @@ python -m twine upload dist/*
 ### 3. Verify
 
 ```powershell
-pip install maxbot
+pip install sysop
 ```
 
 ## Repository Structure
@@ -162,7 +153,7 @@ pip install maxbot
 After setup, your repository should look like:
 
 ```
-maxbot/
+sysop/
 ├── .github/
 │   └── workflows/
 │       └── lint.yml
@@ -170,7 +161,7 @@ maxbot/
 │   ├── basic_usage.ipynb
 │   └── example_usage.py
 ├── src/
-│   └── maxbot/
+│   └── sysop/
 │       ├── __init__.py
 │       ├── chatbot_agent.py
 │       └── jupyter_extension.py
@@ -193,7 +184,7 @@ maxbot/
 If you get "repository not found" or authentication errors:
 - Verify repository URL: `git remote -v`
 - Check GitHub username and permissions
-- Use SSH instead of HTTPS: `git remote set-url origin git@github.com:YOUR_USERNAME/maxbot.git`
+- Use SSH instead of HTTPS: `git remote set-url origin git@github.com:NavigatorBBS/sysop.git`
 
 ### GitHub Actions not running
 
@@ -203,11 +194,10 @@ If you get "repository not found" or authentication errors:
 
 ## Next Steps
 
-1. Update MaxLab repository to reference the new MaxBot location
-2. Create announcement or blog post about the new package
-3. Share on relevant communities (Reddit, Twitter, etc.)
-4. Consider creating a documentation site (GitHub Pages, Read the Docs)
+1. Create announcement or blog post about the new package
+2. Share on relevant communities (Reddit, Twitter, etc.)
+3. Consider creating a documentation site (GitHub Pages, Read the Docs)
 
 ---
 
-**Congratulations!** Your MaxBot repository is now set up and ready for contributions! 🎉
+**Congratulations!** Your sysop repository is now set up and ready for contributions! 🎉
