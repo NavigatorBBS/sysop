@@ -1,11 +1,11 @@
-# MaxBot v0.1.0 Release Notes
+# sysop v0.1.0 Release Notes
 
 **Release Date**: February 2026  
 **Tag**: `v0.1.0`
 
 ## 🎉 Initial Release
 
-MaxBot is now available as a standalone package! This release represents the extraction of MaxBot from the MaxLab project into its own independent Python package.
+sysop is now available as a standalone package! This release represents the extraction of sysop from the MaxLab project into its own independent Python package.
 
 ## ✨ Features
 
@@ -13,7 +13,7 @@ MaxBot is now available as a standalone package! This release represents the ext
 
 - **GitHub Copilot SDK Integration**: Powered by GitHub's official Copilot SDK for high-quality AI responses
 - **NotebookChatAgent**: Main agent class for chat interactions with conversation history management
-- **IPython Extension**: Load with `%load_ext maxbot` for seamless Jupyter integration
+- **IPython Extension**: Load with `%load_ext sysop` for seamless Jupyter integration
 - **Auto-Rendering Responses**: Markdown responses display automatically without explicit `display()` calls
 
 ### Chat Capabilities
@@ -40,10 +40,10 @@ MaxBot is now available as a standalone package! This release represents the ext
 
 ```bash
 # From GitHub
-pip install git+https://github.com/YOUR_USERNAME/maxbot.git
+pip install git+https://github.com/NavigatorBBS/sysop.git
 
 # From PyPI (coming soon)
-pip install maxbot
+pip install sysop
 ```
 
 ## 🚀 Quick Start
@@ -52,7 +52,7 @@ pip install maxbot
 from dotenv import load_dotenv
 load_dotenv()
 
-%load_ext maxbot
+%load_ext sysop
 
 response = await agent.chat("What are pandas best practices?")
 response  # Auto-displays as formatted markdown
@@ -94,7 +94,7 @@ None (initial release)
 
 ## 🔄 Migration from MaxLab
 
-If you were using MaxBot from the MaxLab project:
+If you were using maxbot from the MaxLab project:
 
 ### Before (MaxLab integrated)
 
@@ -103,12 +103,12 @@ If you were using MaxBot from the MaxLab project:
 from maxbot.chatbot_agent import NotebookChatAgent
 ```
 
-### After (Standalone MaxBot)
+### After (Standalone sysop)
 
 ```python
-# Install: pip install maxbot
-%load_ext maxbot
-from maxbot import NotebookChatAgent
+# Install: pip install sysop
+%load_ext sysop
+from sysop import NotebookChatAgent
 ```
 
 ## 🤝 Contributing
@@ -127,12 +127,12 @@ MIT License - See [LICENSE](LICENSE) file for details
 
 ## 🔗 Links
 
-- **Repository**: https://github.com/YOUR_USERNAME/maxbot
-- **Issues**: https://github.com/YOUR_USERNAME/maxbot/issues
+- **Repository**: https://github.com/NavigatorBBS/sysop
+- **Issues**: https://github.com/NavigatorBBS/sysop/issues
 - **MaxLab Project**: https://github.com/NavigatorBBS/maxlab
 
 ---
 
-Thank you for using MaxBot! We're excited to see what you build with it. 🚀
+Thank you for using sysop! We're excited to see what you build with it. 🚀
 
-For questions or feedback, please [open an issue](https://github.com/YOUR_USERNAME/maxbot/issues).
+For questions or feedback, please [open an issue](https://github.com/NavigatorBBS/sysop/issues).

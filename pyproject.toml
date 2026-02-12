@@ -3,9 +3,9 @@ requires = ["setuptools>=65.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "maxbot"
+name = "sysop"
 version = "0.1.0"
-description = "MaxBot: GitHub Copilot SDK-powered Jupyter notebook assistant"
+description = "sysop: GitHub Copilot SDK-powered Jupyter notebook assistant"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -45,12 +45,12 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/YOUR_USERNAME/maxbot"
-Repository = "https://github.com/YOUR_USERNAME/maxbot"
-Issues = "https://github.com/YOUR_USERNAME/maxbot/issues"
+Homepage = "https://github.com/NavigatorBBS/sysop"
+Repository = "https://github.com/NavigatorBBS/sysop"
+Issues = "https://github.com/NavigatorBBS/sysop/issues"
 
 [tool.setuptools]
-packages = ["maxbot"]
+packages = ["sysop"]
 
 [tool.setuptools.package-dir]
 "" = "src"

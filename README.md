@@ -1,15 +1,15 @@
-# 🤖 MaxBot - GitHub Copilot SDK Jupyter Assistant
+# 🤖 sysop - GitHub Copilot SDK Jupyter Assistant
 
-[![Lint](https://github.com/YOUR_USERNAME/maxbot/workflows/Lint/badge.svg)](https://github.com/YOUR_USERNAME/maxbot/actions/workflows/lint.yml)
+[![Lint](https://github.com/NavigatorBBS/sysop/workflows/Lint/badge.svg)](https://github.com/NavigatorBBS/sysop/actions/workflows/lint.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**MaxBot** is a Jupyter notebook assistant powered by GitHub's Copilot SDK. It provides an AI chatbot interface that integrates seamlessly with JupyterLab, enabling natural language interactions for code analysis, suggestions, and general assistance—all within your notebook environment.
+**sysop** is a Jupyter notebook assistant powered by GitHub's Copilot SDK. It provides an AI chatbot interface that integrates seamlessly with JupyterLab, enabling natural language interactions for code analysis, suggestions, and general assistance—all within your notebook environment.
 
 ## ✨ Features
 
 - 🤖 **GitHub Copilot Integration** - Powered by GitHub's official Copilot SDK
-- 📓 **Jupyter Native** - Load as an IPython extension with `%load_ext maxbot`
+- 📓 **Jupyter Native** - Load as an IPython extension with `%load_ext sysop`
 - 💬 **Auto-Rendering Markdown** - Responses display as formatted markdown automatically
 - 🔄 **Conversation History** - Maintains context across multiple interactions
 - 🛠️ **Extensible Tools** - Register custom tools using `@define_tool` decorator
@@ -20,14 +20,14 @@
 ### From PyPI (when published)
 
 ```bash
-pip install maxbot
+pip install sysop
 ```
 
 ### From Source
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/maxbot.git
-cd maxbot
+git clone https://github.com/NavigatorBBS/sysop.git
+cd sysop
 pip install -e ".[dev]"
 ```
 
@@ -49,7 +49,7 @@ Get your token from: https://github.com/settings/tokens (requires copilot scope)
 from dotenv import load_dotenv
 load_dotenv()
 
-%load_ext maxbot
+%load_ext sysop
 ```
 
 This automatically:
@@ -132,7 +132,7 @@ response = await agent.chat("Can you analyze my code?")
 
 ## 🔧 Configuration
 
-MaxBot uses environment variables for configuration:
+sysop uses environment variables for configuration:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -143,7 +143,7 @@ MaxBot uses environment variables for configuration:
 You can also initialize the agent programmatically:
 
 ```python
-from maxbot import NotebookChatAgent
+from sysop import NotebookChatAgent
 
 agent = NotebookChatAgent(
     github_token="your-token",
@@ -174,16 +174,16 @@ A string subclass that auto-renders as Markdown in Jupyter notebooks.
 
 ### IPython Extension
 
-- `load_ipython_extension(ipython)` - Called by `%load_ext maxbot`
-- `unload_ipython_extension(ipython)` - Called by `%unload_ext maxbot`
+- `load_ipython_extension(ipython)` - Called by `%load_ext sysop`
+- `unload_ipython_extension(ipython)` - Called by `%unload_ext sysop`
 
 ## 🧪 Development
 
 ### Setup Development Environment
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/maxbot.git
-cd maxbot
+git clone https://github.com/NavigatorBBS/sysop.git
+cd sysop
 pip install -e ".[dev]"
 ```
 
@@ -222,13 +222,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built on [GitHub Copilot SDK](https://github.com/github/copilot-sdk)
 - Inspired by the need for AI-assisted data science workflows
-- Part of the MaxLab ecosystem (originally)
 
 ## 🔗 Links
 
-- **Documentation**: https://github.com/YOUR_USERNAME/maxbot/wiki
-- **Issues**: https://github.com/YOUR_USERNAME/maxbot/issues
-- **PyPI**: https://pypi.org/project/maxbot/ (coming soon)
+- **Documentation**: https://github.com/NavigatorBBS/sysop/wiki
+- **Issues**: https://github.com/NavigatorBBS/sysop/issues
+- **PyPI**: https://pypi.org/project/sysop/ (coming soon)
 
 ## ⚠️ Requirements
 
@@ -255,4 +254,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Made with ❤️ by [Christopher Landry](https://github.com/YOUR_USERNAME)
+Made with ❤️ by [Christopher Landry](https://github.com/NavigatorBBS)

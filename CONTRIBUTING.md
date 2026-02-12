@@ -1,6 +1,6 @@
-# Contributing to MaxBot
+# Contributing to sysop
 
-Thank you for your interest in contributing to MaxBot! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to sysop! This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -58,8 +58,8 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 1. Clone your fork:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/maxbot.git
-   cd maxbot
+   git clone https://github.com/NavigatorBBS/sysop.git
+   cd sysop
    ```
 
 2. Create a virtual environment:
@@ -120,7 +120,7 @@ pytest tests/ -v
 pytest tests/test_copilot_integration.py -v
 
 # Run with coverage
-pytest --cov=maxbot tests/
+pytest --cov=sysop tests/
 ```
 
 ### Writing Tests
@@ -159,4 +159,4 @@ Examples:
 
 Feel free to open an issue with the `question` label if you need help or clarification.
 
-Thank you for contributing to MaxBot! 🚀
+Thank you for contributing to sysop! 🚀
