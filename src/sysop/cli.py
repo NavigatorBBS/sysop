@@ -39,25 +39,25 @@ PROJECT_VERSION = "0.1.0"
 
 class AnsiColors:
     """ANSI color codes for terminal output."""
-    
+
     RESET = "\033[0m"
     BOLD = "\033[1m"
     DIM = "\033[2m"
-    
+
     # RGB 256-color codes (compatible with most terminals)
-    GOLD = "\033[38;5;220m"      # Gold/yellow
-    TEAL = "\033[38;5;44m"       # Cyan/teal
-    CYAN = "\033[38;5;51m"       # Bright cyan
-    YELLOW = "\033[38;5;226m"    # Bright yellow
-    GREEN = "\033[38;5;46m"      # Bright green
-    WHITE = "\033[38;5;255m"     # White
-    GRAY = "\033[38;5;240m"      # Dark gray
-    
+    GOLD = "\033[38;5;220m"  # Gold/yellow
+    TEAL = "\033[38;5;44m"  # Cyan/teal
+    CYAN = "\033[38;5;51m"  # Bright cyan
+    YELLOW = "\033[38;5;226m"  # Bright yellow
+    GREEN = "\033[38;5;46m"  # Bright green
+    WHITE = "\033[38;5;255m"  # White
+    GRAY = "\033[38;5;240m"  # Dark gray
+
     @staticmethod
     def colored(text: str, color: str) -> str:
         """Apply color to text with reset at end."""
         return f"{color}{text}{AnsiColors.RESET}"
-    
+
     @staticmethod
     def bold(text: str, color: str = "") -> str:
         """Apply bold formatting with optional color."""
@@ -82,13 +82,13 @@ def print_welcome_banner() -> None:
 
 class StyledHelpFormatter(argparse.RawDescriptionHelpFormatter):
     """Custom argparse formatter with styled output."""
-    
+
     def start_section(self, heading):
         """Add colored section headings."""
         if heading:
             heading = AnsiColors.bold(heading, AnsiColors.TEAL)
         super().start_section(heading)
-    
+
     def _format_usage(self, usage, actions, groups, prefix):
         """Format usage with styling."""
         if prefix is None:
@@ -97,11 +97,11 @@ class StyledHelpFormatter(argparse.RawDescriptionHelpFormatter):
         result = super()._format_usage(usage, actions, groups, prefix)
         # Add spacing after usage
         return result + "\n"
-    
+
     def _format_action(self, action):
         """Style individual arguments."""
         return super()._format_action(action)
-    
+
     def _format_action_invocation(self, action):
         """Format the invocation (flags) part of an action."""
         result = super()._format_action_invocation(action)
@@ -118,7 +118,8 @@ def create_parser() -> argparse.ArgumentParser:
     """Create and configure the argument parser."""
     parser = argparse.ArgumentParser(
         prog="sysop",
-        description=AnsiColors.bold("sysop CLI", AnsiColors.GOLD) + " - Test the sysop chat agent from the terminal",
+        description=AnsiColors.bold("sysop CLI", AnsiColors.GOLD)
+        + " - Test the sysop chat agent from the terminal",
         formatter_class=StyledHelpFormatter,
         add_help=True,
     )
@@ -130,7 +131,7 @@ def create_parser() -> argparse.ArgumentParser:
         required=True,
         help="Message to send to the chat agent",
     )
-    
+
     # Custom epilog with styling
     parser.epilog = (
         f"\n{AnsiColors.bold('Examples:', AnsiColors.YELLOW)}\n"
@@ -191,7 +192,7 @@ def run() -> int:
     """Parse arguments and run the async main function."""
     # Print welcome banner before parsing args
     print_welcome_banner()
-    
+
     parser = create_parser()
     args = parser.parse_args()
 
