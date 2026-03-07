@@ -6,8 +6,8 @@ Run the GitHub Copilot-powered chat agent from the terminal to test new features
 before integrating with Jupyter extension.
 
 Usage:
-    python main.py -c "Your question here"
-    python main.py --chat "Analyze this code"
+    sysop -c "Your question here"
+    sysop --chat "Analyze this code"
 """
 
 import argparse
@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 from sysop import NotebookChatAgent
 
 # Load environment variables from .env file
-load_dotenv(Path(__file__).parent / ".env")
+load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
 # Configure logging
 logging.basicConfig(
@@ -134,8 +134,8 @@ def create_parser() -> argparse.ArgumentParser:
     # Custom epilog with styling
     parser.epilog = (
         f"\n{AnsiColors.bold('Examples:', AnsiColors.YELLOW)}\n"
-        f"  python main.py -c 'How do I optimize pandas DataFrames?'\n"
-        f"  python main.py --chat 'Analyze this code for efficiency'\n"
+        f"  sysop -c 'How do I optimize pandas DataFrames?'\n"
+        f"  sysop --chat 'Analyze this code for efficiency'\n"
         f"\n"
         f"{AnsiColors.bold('Environment:', AnsiColors.YELLOW)}\n"
         f"  {AnsiColors.colored('GITHUB_COPILOT_PAT', AnsiColors.CYAN)}\n"

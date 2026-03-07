@@ -67,7 +67,7 @@ line_length = 100
 skip_gitignore = true
 
 [project.scripts]
-sysop = "main:run"
+sysop = "sysop.cli:run"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
