@@ -28,10 +28,12 @@ classifiers = [
 ]
 
 dependencies = [
-    "github-copilot-sdk>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "github-copilot-sdk>=0.1.30",
     "ipython>=8.0.0",
     "jupyterlab>=4.0.0",
     "pydantic>=2.0.0",
+    "python-dotenv>=1.2.2"
 ]
 
 [project.optional-dependencies]
@@ -63,6 +65,9 @@ target-version = ['py310', 'py311', 'py312']
 profile = "black"
 line_length = 100
 skip_gitignore = true
+
+[project.scripts]
+sysop = "sysop.cli:run"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

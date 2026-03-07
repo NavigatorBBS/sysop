@@ -10,7 +10,7 @@ import logging
 import re
 from typing import Any, Dict, List, Optional
 
-from copilot import CopilotClient
+from copilot import CopilotClient, PermissionHandler
 
 logger = logging.getLogger(__name__)
 
@@ -126,6 +126,7 @@ class NotebookChatAgent:
             "model": self.model,
             "system_message": {"role": "system", "content": self.system_prompt},
             "streaming": False,  # Get complete messages
+            "on_permission_request": PermissionHandler.approve_all,
         }
 
         # Add tools if any are registered

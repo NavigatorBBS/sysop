@@ -43,7 +43,16 @@ GITHUB_COPILOT_PAT=your-github-copilot-pat-here
 
 Get your token from: https://github.com/settings/tokens (requires copilot scope)
 
-### 2. Load the extension in a Jupyter notebook
+### 2. Use the CLI
+
+You can test the agent from your terminal:
+
+```bash
+sysop -c "How can I optimize this pandas DataFrame?"
+sysop --chat "Analyze this code for efficiency"
+```
+
+### 3. Load the extension in a Jupyter notebook
 
 ```python
 from dotenv import load_dotenv
@@ -57,7 +66,7 @@ This automatically:
 - Injects the `agent` variable into your notebook namespace
 - Makes `display()` and `Markdown()` utilities available
 
-### 3. Chat with the agent
+### 4. Chat with the agent
 
 ```python
 # Simple usage - response auto-displays as markdown
@@ -67,7 +76,17 @@ response
 
 ## 📚 Usage Examples
 
-### Basic Chat
+### CLI Usage
+
+```bash
+# Ask questions
+sysop -c "What's the best way to handle missing data in pandas?"
+
+# For longer questions with special characters, use quotes
+sysop --chat "How do I optimize DataFrame groupby operations?"
+```
+
+### Jupyter Extension Usage
 
 ```python
 # Ask questions
