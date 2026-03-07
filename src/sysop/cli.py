@@ -15,7 +15,6 @@ import asyncio
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 from dotenv import load_dotenv
 
@@ -72,10 +71,13 @@ def print_welcome_banner() -> None:
     banner = f"""
 {AnsiColors.colored(separator, AnsiColors.TEAL)}
 {AnsiColors.bold("sysop", AnsiColors.GOLD)} - GitHub Copilot AI Assistant
-{AnsiColors.colored(f"v{PROJECT_VERSION}", AnsiColors.CYAN)} | {AnsiColors.colored("NavigatorBBS", AnsiColors.GOLD)}
+{AnsiColors.colored(f"v{PROJECT_VERSION}", AnsiColors.CYAN)} | \
+{AnsiColors.colored("NavigatorBBS", AnsiColors.GOLD)}
 {AnsiColors.colored(separator, AnsiColors.TEAL)}
-{AnsiColors.colored("Author:", AnsiColors.WHITE)} {AnsiColors.colored(AUTHOR_NAME, AnsiColors.GOLD)}
-{AnsiColors.colored("Email: ", AnsiColors.WHITE)} {AnsiColors.colored(AUTHOR_EMAIL, AnsiColors.CYAN)}
+{AnsiColors.colored("Author:", AnsiColors.WHITE)} \
+{AnsiColors.colored(AUTHOR_NAME, AnsiColors.GOLD)}
+{AnsiColors.colored("Email: ", AnsiColors.WHITE)} \
+{AnsiColors.colored(AUTHOR_EMAIL, AnsiColors.CYAN)}
 """
     print(banner)
 
@@ -142,7 +144,8 @@ def create_parser() -> argparse.ArgumentParser:
         f"  {AnsiColors.colored('GITHUB_COPILOT_PAT', AnsiColors.CYAN)}\n"
         f"    Your GitHub Copilot Personal Access Token (required)\n"
         f"\n"
-        f"{AnsiColors.colored('NavigatorBBS', AnsiColors.TEAL)} | {AnsiColors.colored(AUTHOR_EMAIL, AnsiColors.GRAY)}\n"
+        f"{AnsiColors.colored('NavigatorBBS', AnsiColors.TEAL)} | "
+        f"{AnsiColors.colored(AUTHOR_EMAIL, AnsiColors.GRAY)}\n"
     )
 
     return parser
