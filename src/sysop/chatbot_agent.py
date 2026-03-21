@@ -11,6 +11,7 @@ import re
 from typing import Any, Dict, List, Optional
 
 from copilot import CopilotClient, PermissionHandler
+from copilot.types import SubprocessConfig
 
 logger = logging.getLogger(__name__)
 
@@ -81,11 +82,11 @@ class NotebookChatAgent:
 
         # Initialize client with GitHub token
         self.client = CopilotClient(
-            {
-                "github_token": self.github_token,
-                "log_level": "info",
-                "auto_start": True,
-            }
+            SubprocessConfig(
+                github_token=self.github_token,
+                log_level="info",
+            ),
+            auto_start=True,
         )
 
         self.session = None
@@ -122,18 +123,18 @@ class NotebookChatAgent:
         await self.client.start()
 
         # Create session with system message and tools
-        session_config = {
+        session_kwargs = {
             "model": self.model,
-            "system_message": {"role": "system", "content": self.system_prompt},
+            "system_message": {"mode": "append", "content": self.system_prompt},
             "streaming": False,  # Get complete messages
             "on_permission_request": PermissionHandler.approve_all,
         }
 
         # Add tools if any are registered
         if self.tools:
-            session_config["tools"] = self.tools
+            session_kwargs["tools"] = self.tools
 
-        self.session = await self.client.create_session(session_config)
+        self.session = await self.client.create_session(**session_kwargs)
         logger.info(f"Session created with model {self.model}")
 
     def add_plugin(self, plugin_instance: Any, plugin_name: str) -> None:
@@ -224,6 +225,8 @@ class NotebookChatAgent:
         done = asyncio.Event()
         error_message = None
 
+        cleanup_handler = None
+
         def on_event(event):
             nonlocal error_message
 
@@ -245,17 +248,20 @@ class NotebookChatAgent:
                 error_message = str(event.data) if hasattr(event, "data") else "Unknown error"
                 done.set()
 
-        # Register event handler
-        self.session.on(on_event)
-
-        # Send the message
-        await self.session.send({"prompt": user_message})
-
-        # Wait for completion (with timeout)
         try:
+            # Register event handler before sending so early events are not missed.
+            cleanup_handler = self.session.on(on_event)
+
+            # Send the message
+            await self.session.send(user_message)
+
+            # Wait for completion (with timeout)
             await asyncio.wait_for(done.wait(), timeout=60.0)
         except asyncio.TimeoutError:
             return "❌ **Request timed out**\n\nThe agent took too long to respond."
+        finally:
+            if cleanup_handler is not None:
+                cleanup_handler()
 
         if error_message:
             return f"❌ **Error**\n\n{error_message}"

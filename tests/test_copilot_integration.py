@@ -7,6 +7,7 @@ Or: python workspace/src/sysop/test_copilot_integration.py
 
 import asyncio
 import os
+from types import SimpleNamespace
 
 try:
     import pytest
@@ -48,21 +49,32 @@ class TestCopilotSDKIntegration:
         except ImportError as e:
             pytest.fail(f"Import failed: {e}")
 
-    def test_agent_initialization(self):
+    def test_agent_initialization(self, monkeypatch):
         """Test agent can be initialized with proper parameters."""
-        from sysop.chatbot_agent import NotebookChatAgent
+        from sysop import chatbot_agent as chatbot_agent_module
 
-        # Mock token for testing
-        os.environ["GITHUB_COPILOT_PAT"] = "test-token-for-initialization"
+        class FakeSubprocessConfig:
+            def __init__(self, **kwargs):
+                self.kwargs = kwargs
 
-        try:
-            agent = NotebookChatAgent(model="gpt-4o")
-            assert agent.model == "gpt-4o"
-            assert agent.system_prompt is not None
-            assert agent.session is None  # Not initialized yet
-            print("✅ Agent initialization successful")
-        except Exception as e:
-            pytest.fail(f"Agent initialization failed: {e}")
+        class FakeClient:
+            def __init__(self, config, auto_start=True):
+                self.config = config
+                self.auto_start = auto_start
+
+        monkeypatch.setattr(chatbot_agent_module, "SubprocessConfig", FakeSubprocessConfig)
+        monkeypatch.setattr(chatbot_agent_module, "CopilotClient", FakeClient)
+        monkeypatch.setenv("GITHUB_COPILOT_PAT", "test-token-for-initialization")
+
+        agent = chatbot_agent_module.NotebookChatAgent(model="gpt-4o")
+        assert agent.model == "gpt-4o"
+        assert agent.system_prompt is not None
+        assert agent.session is None  # Not initialized yet
+        assert isinstance(agent.client.config, FakeSubprocessConfig)
+        assert agent.client.config.kwargs["github_token"] == "test-token-for-initialization"
+        assert agent.client.config.kwargs["log_level"] == "info"
+        assert agent.client.auto_start is True
+        print("✅ Agent initialization successful")
 
     def test_markdown_response(self):
         """Test MarkdownResponse class."""
@@ -72,6 +84,77 @@ class TestCopilotSDKIntegration:
         assert str(response) == "**Hello** World"
         assert response._repr_markdown_() == "**Hello** World"
         print("✅ MarkdownResponse works correctly")
+
+    def test_chat_uses_keyword_session_config(self, monkeypatch):
+        """Verify chat initializes the session using the current SDK API."""
+        from sysop import chatbot_agent as chatbot_agent_module
+
+        class FakeSubprocessConfig:
+            def __init__(self, **kwargs):
+                self.kwargs = kwargs
+
+        class FakeSession:
+            def __init__(self):
+                self.handlers = []
+                self.sent_prompts = []
+
+            def on(self, handler):
+                self.handlers.append(handler)
+
+                def unsubscribe():
+                    self.handlers.remove(handler)
+
+                return unsubscribe
+
+            async def send(self, prompt, **kwargs):
+                self.sent_prompts.append((prompt, kwargs))
+                for handler in list(self.handlers):
+                    handler(
+                        SimpleNamespace(
+                            type=SimpleNamespace(value="assistant.message"),
+                            data=SimpleNamespace(content="Mock reply"),
+                        )
+                    )
+                    handler(
+                        SimpleNamespace(
+                            type=SimpleNamespace(value="session.idle"),
+                            data=None,
+                        )
+                    )
+                return "message-1"
+
+        class FakeClient:
+            def __init__(self, config, auto_start=True):
+                self.config = config
+                self.auto_start = auto_start
+                self.started = False
+                self.create_session_kwargs = None
+                self.session = FakeSession()
+
+            async def start(self):
+                self.started = True
+
+            async def create_session(self, **kwargs):
+                self.create_session_kwargs = kwargs
+                return self.session
+
+        monkeypatch.setattr(chatbot_agent_module, "SubprocessConfig", FakeSubprocessConfig)
+        monkeypatch.setattr(chatbot_agent_module, "CopilotClient", FakeClient)
+        monkeypatch.setenv("GITHUB_COPILOT_PAT", "test-token")
+
+        agent = chatbot_agent_module.NotebookChatAgent(model="gpt-4o")
+        response = asyncio.run(agent.chat("Hello from test"))
+
+        assert str(response) == "Mock reply"
+        assert agent.client.started is True
+        assert agent.client.create_session_kwargs["model"] == "gpt-4o"
+        assert agent.client.create_session_kwargs["streaming"] is False
+        assert agent.client.create_session_kwargs["system_message"] == {
+            "mode": "append",
+            "content": agent.system_prompt,
+        }
+        assert agent.client.create_session_kwargs["on_permission_request"] is not None
+        assert agent.client.session.sent_prompts == [("Hello from test", {})]
 
     @pytest.mark.skipif(
         not os.getenv("GITHUB_COPILOT_PAT"),
