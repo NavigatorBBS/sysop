@@ -8,9 +8,10 @@ and can analyze code, suggest improvements, and provide financial insights.
 import asyncio
 import logging
 import re
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
-from copilot import CopilotClient, PermissionHandler, SubprocessConfig
+from copilot import CopilotClient, PermissionHandler
+from copilot.types import SubprocessConfig
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ class NotebookChatAgent:
         """
         if CopilotClient is None:
             raise ImportError(
-                "GitHub Copilot SDK not installed. " "Install with: pip install github-copilot-sdk"
+                "GitHub Copilot SDK not installed. " "Install with: pip install copilot-sdk"
             )
 
         import os
@@ -122,18 +123,18 @@ class NotebookChatAgent:
         await self.client.start()
 
         # Create session with system message and tools
-        session_config = {
-            "on_permission_request": PermissionHandler.approve_all,
+        session_kwargs = {
             "model": self.model,
-            "system_message": {"content": self.system_prompt},
+            "system_message": {"mode": "append", "content": self.system_prompt},
             "streaming": False,  # Get complete messages
+            "on_permission_request": PermissionHandler.approve_all,
         }
 
         # Add tools if any are registered
         if self.tools:
-            session_config["tools"] = self.tools
+            session_kwargs["tools"] = self.tools
 
-        self.session = await self.client.create_session(**session_config)
+        self.session = await self.client.create_session(**session_kwargs)
         logger.info(f"Session created with model {self.model}")
 
     def add_plugin(self, plugin_instance: Any, plugin_name: str) -> None:
@@ -224,6 +225,8 @@ class NotebookChatAgent:
         done = asyncio.Event()
         error_message = None
 
+        cleanup_handler = None
+
         def on_event(event):
             nonlocal error_message
 
@@ -245,17 +248,20 @@ class NotebookChatAgent:
                 error_message = str(event.data) if hasattr(event, "data") else "Unknown error"
                 done.set()
 
-        # Register event handler
-        self.session.on(on_event)
-
-        # Send the message
-        await self.session.send(user_message)
-
-        # Wait for completion (with timeout)
         try:
+            # Register event handler before sending so early events are not missed.
+            cleanup_handler = self.session.on(on_event)
+
+            # Send the message
+            await self.session.send(user_message)
+
+            # Wait for completion (with timeout)
             await asyncio.wait_for(done.wait(), timeout=60.0)
         except asyncio.TimeoutError:
             return "❌ **Request timed out**\n\nThe agent took too long to respond."
+        finally:
+            if cleanup_handler is not None:
+                cleanup_handler()
 
         if error_message:
             return f"❌ **Error**\n\n{error_message}"
@@ -346,21 +352,21 @@ class NotebookChatAgent:
 
     async def clear_history(self) -> None:
         """
-        Clear the conversation history by disconnecting and recreating the session.
+        Clear the conversation history by destroying and recreating the session.
 
         This starts a fresh conversation with the agent.
         """
         if self.session:
-            await self.session.disconnect()
+            await self.session.destroy()
             self.session = None
-        logger.info("Session disconnected - history cleared")
+        logger.info("Session destroyed - history cleared")
 
-    async def get_messages(self) -> List[Any]:
+    async def get_messages(self) -> List[Dict[str, Any]]:
         """
         Get the current conversation history from the session.
 
         Returns:
-            List of session events from the active conversation
+            List of message dictionaries with role and content
         """
         if not self.session:
             return []
@@ -375,17 +381,17 @@ class NotebookChatAgent:
 
     async def cleanup(self) -> None:
         """
-        Clean up resources: disconnect the session and stop the client.
+        Clean up resources: destroy session and stop client.
 
         Call this when done using the agent to properly release resources.
         """
         if self.session:
             try:
-                await self.session.disconnect()
+                await self.session.destroy()
                 self.session = None
-                logger.info("Session disconnected")
+                logger.info("Session destroyed")
             except Exception as e:
-                logger.error(f"Failed to disconnect session: {e}")
+                logger.error(f"Failed to destroy session: {e}")
 
         try:
             await self.client.stop()
