@@ -28,7 +28,6 @@ classifiers = [
 ]
 
 dependencies = [
-    "python-dotenv>=1.0.0",
     "github-copilot-sdk>=0.1.30",
     "ipython>=8.0.0",
     "jupyterlab>=4.0.0",
