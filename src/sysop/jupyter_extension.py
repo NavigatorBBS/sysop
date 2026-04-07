@@ -78,7 +78,7 @@ def load_ipython_extension(ipython):
                 "GitHub Copilot SDK not installed.\n\n"
                 "Install with:\n"
                 "```bash\n"
-                "pip install copilot-sdk\n"
+                "pip install github-copilot-sdk\n"
                 "```\n\n"
                 f"Error: {str(e)}"
             )

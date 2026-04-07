@@ -8,9 +8,9 @@ and can analyze code, suggest improvements, and provide financial insights.
 import asyncio
 import logging
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
-from copilot import CopilotClient
+from copilot import CopilotClient, PermissionHandler, SubprocessConfig
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ class NotebookChatAgent:
         """
         if CopilotClient is None:
             raise ImportError(
-                "GitHub Copilot SDK not installed. " "Install with: pip install copilot-sdk"
+                "GitHub Copilot SDK not installed. " "Install with: pip install github-copilot-sdk"
             )
 
         import os
@@ -81,11 +81,11 @@ class NotebookChatAgent:
 
         # Initialize client with GitHub token
         self.client = CopilotClient(
-            {
-                "github_token": self.github_token,
-                "log_level": "info",
-                "auto_start": True,
-            }
+            SubprocessConfig(
+                github_token=self.github_token,
+                log_level="info",
+            ),
+            auto_start=True,
         )
 
         self.session = None
@@ -123,8 +123,9 @@ class NotebookChatAgent:
 
         # Create session with system message and tools
         session_config = {
+            "on_permission_request": PermissionHandler.approve_all,
             "model": self.model,
-            "system_message": {"role": "system", "content": self.system_prompt},
+            "system_message": {"content": self.system_prompt},
             "streaming": False,  # Get complete messages
         }
 
@@ -132,7 +133,7 @@ class NotebookChatAgent:
         if self.tools:
             session_config["tools"] = self.tools
 
-        self.session = await self.client.create_session(session_config)
+        self.session = await self.client.create_session(**session_config)
         logger.info(f"Session created with model {self.model}")
 
     def add_plugin(self, plugin_instance: Any, plugin_name: str) -> None:
@@ -248,7 +249,7 @@ class NotebookChatAgent:
         self.session.on(on_event)
 
         # Send the message
-        await self.session.send({"prompt": user_message})
+        await self.session.send(user_message)
 
         # Wait for completion (with timeout)
         try:
@@ -345,21 +346,21 @@ class NotebookChatAgent:
 
     async def clear_history(self) -> None:
         """
-        Clear the conversation history by destroying and recreating the session.
+        Clear the conversation history by disconnecting and recreating the session.
 
         This starts a fresh conversation with the agent.
         """
         if self.session:
-            await self.session.destroy()
+            await self.session.disconnect()
             self.session = None
-        logger.info("Session destroyed - history cleared")
+        logger.info("Session disconnected - history cleared")
 
-    async def get_messages(self) -> List[Dict[str, Any]]:
+    async def get_messages(self) -> List[Any]:
         """
         Get the current conversation history from the session.
 
         Returns:
-            List of message dictionaries with role and content
+            List of session events from the active conversation
         """
         if not self.session:
             return []
@@ -374,17 +375,17 @@ class NotebookChatAgent:
 
     async def cleanup(self) -> None:
         """
-        Clean up resources: destroy session and stop client.
+        Clean up resources: disconnect the session and stop the client.
 
         Call this when done using the agent to properly release resources.
         """
         if self.session:
             try:
-                await self.session.destroy()
+                await self.session.disconnect()
                 self.session = None
-                logger.info("Session destroyed")
+                logger.info("Session disconnected")
             except Exception as e:
-                logger.error(f"Failed to destroy session: {e}")
+                logger.error(f"Failed to disconnect session: {e}")
 
         try:
             await self.client.stop()

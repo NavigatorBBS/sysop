@@ -7,6 +7,7 @@ Or: python workspace/src/sysop/test_copilot_integration.py
 
 import asyncio
 import os
+from types import SimpleNamespace
 
 try:
     import pytest
@@ -72,6 +73,95 @@ class TestCopilotSDKIntegration:
         assert str(response) == "**Hello** World"
         assert response._repr_markdown_() == "**Hello** World"
         print("✅ MarkdownResponse works correctly")
+
+    def test_agent_uses_current_sdk_session_api(self, monkeypatch):
+        """Verify the agent uses the current Copilot SDK client/session API."""
+        import sysop.chatbot_agent as chatbot_agent
+
+        captured = {}
+
+        class FakeSubprocessConfig:
+            def __init__(self, **kwargs):
+                self.kwargs = kwargs
+
+        class FakeSession:
+            def __init__(self):
+                self.handlers = []
+                self.sent_prompts = []
+                self.disconnected = False
+
+            def on(self, handler):
+                self.handlers.append(handler)
+
+            async def send(self, prompt):
+                self.sent_prompts.append(prompt)
+                handler = self.handlers[-1]
+                handler(
+                    SimpleNamespace(
+                        type=SimpleNamespace(value="assistant.message"),
+                        data=SimpleNamespace(content="**Hello** from Copilot"),
+                    )
+                )
+                handler(
+                    SimpleNamespace(
+                        type=SimpleNamespace(value="session.idle"),
+                        data=None,
+                    )
+                )
+
+            async def disconnect(self):
+                self.disconnected = True
+
+            async def get_messages(self):
+                return []
+
+        class FakeClient:
+            def __init__(self, config=None, **kwargs):
+                captured["config"] = config
+                captured["client_kwargs"] = kwargs
+                captured["client"] = self
+
+            async def start(self):
+                captured["started"] = True
+
+            async def create_session(self, **kwargs):
+                captured["session_kwargs"] = kwargs
+                captured["session"] = FakeSession()
+                return captured["session"]
+
+            async def stop(self):
+                captured["stopped"] = True
+
+        class FakePermissionHandler:
+            @staticmethod
+            def approve_all(*args, **kwargs):
+                return {"behavior": "allow"}
+
+        monkeypatch.setattr(chatbot_agent, "SubprocessConfig", FakeSubprocessConfig)
+        monkeypatch.setattr(chatbot_agent, "CopilotClient", FakeClient)
+        monkeypatch.setattr(chatbot_agent, "PermissionHandler", FakePermissionHandler)
+
+        agent = chatbot_agent.NotebookChatAgent(github_token="test-token", model="gpt-4o")
+
+        assert isinstance(captured["config"], FakeSubprocessConfig)
+        assert captured["config"].kwargs["github_token"] == "test-token"
+        assert captured["config"].kwargs["log_level"] == "info"
+        assert captured["client_kwargs"]["auto_start"] is True
+
+        response = asyncio.run(agent.chat("Say hello"))
+
+        assert str(response) == "**Hello** from Copilot"
+        assert captured["started"] is True
+        assert captured["session_kwargs"]["model"] == "gpt-4o"
+        assert captured["session_kwargs"]["streaming"] is False
+        assert (
+            captured["session_kwargs"]["on_permission_request"] is FakePermissionHandler.approve_all
+        )
+        assert captured["session"].sent_prompts == ["Say hello"]
+
+        asyncio.run(agent.cleanup())
+        assert captured["session"].disconnected is True
+        assert captured["stopped"] is True
 
     @pytest.mark.skipif(
         not os.getenv("GITHUB_COPILOT_PAT"),
