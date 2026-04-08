@@ -10,6 +10,8 @@
 
 - 🤖 **GitHub Copilot Integration** - Powered by GitHub's official Copilot SDK
 - 📓 **Jupyter Native** - Load as an IPython extension with `%load_ext sysop`
+- 🧭 **JupyterLab Side Panel** - Keep an ongoing `sysop` chat open in the right sidebar
+- 🧪 **Current Cell Discussion** - Send the active notebook cell explicitly with a chat request
 - 💬 **Auto-Rendering Markdown** - Responses display as formatted markdown automatically
 - 🔄 **Conversation History** - Maintains context across multiple interactions
 - 🛠️ **Extensible Tools** - Register custom tools using `@define_tool` decorator
@@ -29,7 +31,19 @@ pip install sysop
 git clone https://github.com/NavigatorBBS/sysop.git
 cd sysop
 pip install -e ".[dev]"
+npm install
+npm run build
 ```
+
+If you are developing from an editable checkout and want JupyterLab to load the side panel extension
+from your working tree, also run:
+
+```bash
+jupyter labextension develop . --overwrite
+```
+
+Wheel installs include the prebuilt labextension assets automatically, so the extra
+`jupyter labextension develop` step is only needed for local editable development.
 
 ## 🚀 Quick Start
 
@@ -43,7 +57,25 @@ GITHUB_COPILOT_PAT=your-github-copilot-pat-here
 
 Get your token from: https://github.com/settings/tokens (requires copilot scope)
 
-### 2. Use the CLI
+### 2. Open the JupyterLab side panel
+
+Start JupyterLab:
+
+```bash
+jupyter lab
+```
+
+The `sysop` panel opens in the right sidebar when the extension loads. You can also reopen it from
+the Command Palette with **Open sysop Chat**.
+
+Use the panel to:
+
+- Keep a persistent chat open for the active notebook kernel
+- Send ordinary freeform questions with **Send**
+- Use **Discuss current cell** to attach the active cell only for that request
+- Reset the conversation with **Clear chat**
+
+### 3. Use the CLI
 
 You can test the agent from your terminal:
 
@@ -52,7 +84,7 @@ sysop -c "How can I optimize this pandas DataFrame?"
 sysop --chat "Analyze this code for efficiency"
 ```
 
-### 3. Load the extension in a Jupyter notebook
+### 4. Load the extension in a Jupyter notebook
 
 ```python
 from dotenv import load_dotenv
@@ -66,7 +98,7 @@ This automatically:
 - Injects the `agent` variable into your notebook namespace
 - Makes `display()` and `Markdown()` utilities available
 
-### 4. Chat with the agent
+### 5. Chat with the agent
 
 ```python
 # Simple usage - response auto-displays as markdown
@@ -96,6 +128,17 @@ response  # Auto-displays as formatted markdown
 # For plain text without markdown formatting
 plain_text = await agent.chat("Your question", as_markdown=False)
 ```
+
+### JupyterLab Side Panel Usage
+
+The JupyterLab panel keeps a persistent chat session tied to the active notebook kernel.
+
+- **Send** submits a normal chat message.
+- **Discuss current cell** sends the active cell source and metadata with that one request.
+- **Clear chat** resets the underlying `NotebookChatAgent` session.
+
+If you want to work directly in notebook cells as well, `%load_ext sysop` still injects
+`agent`, `display`, and `Markdown` into the IPython namespace.
 
 ### Code Analysis
 
@@ -204,6 +247,14 @@ A string subclass that auto-renders as Markdown in Jupyter notebooks.
 git clone https://github.com/NavigatorBBS/sysop.git
 cd sysop
 pip install -e ".[dev]"
+npm install
+npm run build
+```
+
+To load the side panel from an editable checkout while developing JupyterLab UI changes:
+
+```bash
+jupyter labextension develop . --overwrite
 ```
 
 ### Run Tests

@@ -8,12 +8,74 @@ and can analyze code, suggest improvements, and provide financial insights.
 import asyncio
 import logging
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
 
-from copilot import CopilotClient, PermissionHandler
-from copilot.types import SubprocessConfig
+from copilot import CopilotClient, SubprocessConfig
+
+try:
+    from copilot import PermissionHandler
+except ImportError:
+    from copilot.session import PermissionHandler
 
 logger = logging.getLogger(__name__)
+
+
+class NotebookCellContext(TypedDict, total=False):
+    """Structured metadata about the active notebook cell."""
+
+    notebook_path: str
+    cell_index: int
+    cell_type: str
+    language: str
+    source: str
+
+
+def build_notebook_cell_prompt(user_message: str, cell_context: NotebookCellContext) -> str:
+    """
+    Build a chat prompt that explicitly includes notebook cell context.
+
+    Args:
+        user_message: The user's request for the assistant.
+        cell_context: Metadata describing the current notebook cell.
+
+    Returns:
+        A prompt that combines the user's request with structured cell details.
+    """
+    message = user_message.strip() or "Please discuss the current notebook cell in detail."
+    notebook_path = str(cell_context.get("notebook_path") or "").strip()
+    cell_type = str(cell_context.get("cell_type") or "").strip()
+    language = str(cell_context.get("language") or "").strip()
+    source = str(cell_context.get("source") or "")
+
+    metadata_lines = []
+    if notebook_path:
+        metadata_lines.append(f"- Notebook path: `{notebook_path}`")
+
+    cell_index = cell_context.get("cell_index")
+    if cell_index is not None:
+        metadata_lines.append(f"- Cell index: {cell_index}")
+
+    if cell_type:
+        metadata_lines.append(f"- Cell type: `{cell_type}`")
+
+    if not metadata_lines:
+        metadata_lines.append("- No additional notebook metadata was supplied.")
+
+    code_fence = language or ("python" if cell_type == "code" else "")
+    cell_source = source.rstrip()
+    if cell_source:
+        source_block = f"```{code_fence}\n{cell_source}\n```"
+    else:
+        source_block = "_The current cell is empty._"
+
+    return (
+        f"{message}\n\n"
+        "Use the current notebook cell context below when answering.\n\n"
+        "Current cell metadata:\n"
+        f"{chr(10).join(metadata_lines)}\n\n"
+        "Current cell source:\n"
+        f"{source_block}"
+    )
 
 
 class MarkdownResponse(str):
@@ -348,6 +410,22 @@ class NotebookChatAgent:
             f"4. Documentation and clarity"
         )
 
+        return await self.chat(prompt)
+
+    async def discuss_notebook_cell(
+        self, user_message: str, cell_context: NotebookCellContext
+    ) -> MarkdownResponse | str:
+        """
+        Discuss a specific notebook cell while preserving the ongoing chat session.
+
+        Args:
+            user_message: The user's request about the current cell.
+            cell_context: Metadata and source for the current notebook cell.
+
+        Returns:
+            The agent response, preserving the default markdown behavior.
+        """
+        prompt = build_notebook_cell_prompt(user_message, cell_context)
         return await self.chat(prompt)
 
     async def clear_history(self) -> None:

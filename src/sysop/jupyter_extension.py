@@ -19,6 +19,12 @@ import os
 
 from IPython.display import Markdown, display
 
+from sysop.lab_bridge import (  # noqa: F401
+    PUBLIC_BRIDGE_NAME,
+    get_or_create_lab_bridge,
+    handle_lab_request,
+)
+
 
 def load_ipython_extension(ipython):
     """
@@ -26,9 +32,6 @@ def load_ipython_extension(ipython):
 
     This is called when a user runs: %load_ext sysop
     """
-    # Import here to avoid circular dependencies
-    from sysop.chatbot_agent import NotebookChatAgent
-
     # Get GitHub Copilot configuration from environment
     github_pat = os.getenv("GITHUB_COPILOT_PAT")
 
@@ -37,19 +40,22 @@ def load_ipython_extension(ipython):
         if not github_pat:
             raise ValueError("GITHUB_COPILOT_PAT environment variable not set")
 
-        # Initialize the agent
-        agent = NotebookChatAgent(github_token=github_pat)
+        # Initialize or reuse the shared kernel bridge and agent
+        bridge = get_or_create_lab_bridge(ipython, github_token=github_pat)
+        agent = bridge.agent
 
         # Inject into IPython namespace
         ipython.user_ns["agent"] = agent
         ipython.user_ns["display"] = display
         ipython.user_ns["Markdown"] = Markdown
+        ipython.user_ns[PUBLIC_BRIDGE_NAME] = bridge
 
         # Display status
         display(
             Markdown(
                 "**sysop Ready! 🤖**\n\n"
                 "🟢 **GitHub Copilot SDK** configured\n\n"
+                "JupyterLab side panel support is available once the labextension is installed.\n\n"
                 "Usage:\n"
                 "```python\n"
                 "# Simple usage - auto-displays as markdown:\n"
@@ -114,6 +120,6 @@ def unload_ipython_extension(ipython):
 
     Called when a user runs: %unload_ext sysop
     """
-    for name in ["agent", "display", "Markdown"]:
+    for name in ["agent", "display", "Markdown", PUBLIC_BRIDGE_NAME, "__sysop_lab_bridge"]:
         if name in ipython.user_ns:
             del ipython.user_ns[name]

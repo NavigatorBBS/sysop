@@ -1,0 +1,123 @@
+.sysop-SidePanel {
+  display: flex;
+  flex-direction: column;
+  min-width: 320px;
+  height: 100%;
+  color: var(--jp-ui-font-color1);
+  background: var(--jp-layout-color1);
+}
+
+.sysop-SidePanel-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  padding: 12px;
+}
+
+.sysop-SidePanel-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sysop-SidePanel-title {
+  font-size: var(--jp-ui-font-size2);
+  font-weight: 600;
+}
+
+.sysop-SidePanel-status {
+  color: var(--jp-ui-font-color2);
+  font-size: var(--jp-ui-font-size0);
+}
+
+.sysop-SidePanel-status[data-busy="true"] {
+  color: var(--jp-warn-color1);
+}
+
+.sysop-SidePanel-messages {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.sysop-Message {
+  border: 1px solid var(--jp-border-color2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  line-height: 1.5;
+}
+
+.sysop-Message--user {
+  background: var(--jp-layout-color2);
+}
+
+.sysop-Message--assistant {
+  background: var(--jp-layout-color1);
+}
+
+.sysop-Message--error {
+  border-color: var(--jp-error-color2);
+  background: color-mix(in srgb, var(--jp-error-color2) 12%, transparent);
+}
+
+.sysop-Message-role {
+  margin-bottom: 6px;
+  color: var(--jp-ui-font-color2);
+  font-size: var(--jp-ui-font-size0);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.sysop-Message-context {
+  margin-top: 8px;
+  color: var(--jp-ui-font-color2);
+  font-size: var(--jp-ui-font-size0);
+}
+
+.sysop-SidePanel-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sysop-SidePanel-input {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.sysop-SidePanel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sysop-SidePanel-button {
+  padding: 6px 10px;
+  border: 1px solid var(--jp-border-color2);
+  border-radius: 6px;
+  background: var(--jp-layout-color2);
+  color: inherit;
+  cursor: pointer;
+}
+
+.sysop-SidePanel-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.sysop-SidePanel-help {
+  color: var(--jp-ui-font-color2);
+  font-size: var(--jp-ui-font-size0);
+}
+
+.sysop-Message-content pre {
+  overflow-x: auto;
+  padding: 8px;
+  border-radius: 6px;
+  background: var(--jp-layout-color2);
+}

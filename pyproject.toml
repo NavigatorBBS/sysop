@@ -17,6 +17,9 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
+    "Framework :: Jupyter :: JupyterLab",
+    "Framework :: Jupyter :: JupyterLab :: Extensions :: Prebuilt",
+    "Framework :: Jupyter :: JupyterLab :: 4",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
@@ -52,6 +55,7 @@ Issues = "https://github.com/NavigatorBBS/sysop/issues"
 
 [tool.setuptools]
 packages = ["sysop"]
+include-package-data = true
 
 [tool.setuptools.package-dir]
 "" = "src"

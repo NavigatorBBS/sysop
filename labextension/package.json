@@ -1,0 +1,47 @@
+{
+  "name": "sysop-jupyterlab",
+  "version": "0.1.0",
+  "description": "sysop JupyterLab side panel extension",
+  "license": "MIT",
+  "author": "Christopher Landry",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "style": "style/index.css",
+  "sideEffects": [
+    "style/index.css"
+  ],
+  "files": [
+    "lib/**/*",
+    "style/**/*"
+  ],
+  "scripts": {
+    "build": "tsc && jupyter labextension build .",
+    "clean": "rimraf lib labextension tsconfig.tsbuildinfo"
+  },
+  "dependencies": {
+    "@jupyterlab/application": "^4.5.6",
+    "@jupyterlab/apputils": "^4.5.6",
+    "@jupyterlab/notebook": "^4.5.6",
+    "@jupyterlab/services": "^7.5.6",
+    "@lumino/widgets": "^2.7.1",
+    "dompurify": "^3.2.6",
+    "marked": "^16.2.1"
+  },
+  "devDependencies": {
+    "@jupyterlab/builder": "^4.5.6",
+    "rimraf": "^6.0.1",
+    "typescript": "~5.8.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "jupyterlab": {
+    "extension": "lib/index.js",
+    "outputDir": "labextension",
+    "_build": {
+      "load": "static\\remoteEntry.2b51e53dc56467f74991.js",
+      "extension": "./extension",
+      "style": "./style"
+    }
+  }
+}

@@ -59,3 +59,7 @@ dmypy.json
 # Distribution
 *.tar.gz
 *.whl
+
+# Frontend build artifacts
+node_modules/
+tsconfig.tsbuildinfo

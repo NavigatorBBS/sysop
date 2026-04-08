@@ -1,0 +1,6 @@
+include install.json
+include package.json
+include tsconfig.json
+graft ui-src
+graft style
+graft labextension
